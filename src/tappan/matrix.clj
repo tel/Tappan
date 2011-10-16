@@ -122,8 +122,9 @@
 ; TODO: Refactor this vector flipping business.
 (defn sum
   "Computes the sum of two (or more) SimpleMatrix objects. If they're
-  both vectors, they will be automatically transposed if necessary so
-  as to match the shape of the first one"
+   both vectors, they will be automatically transposed if necessary so
+   as to match the shape of the first one"
+  ([a] a)
   ([a b & more] (reduce sum (sum a b) more))
   ([a b]
      (if (and (.isVector a)
@@ -139,18 +140,23 @@
        (.plus a b))))
 
 (defn diff
-  [a b]
-  (if (and (.isVector a)
-           (.isVector b))
-    ;; Let's try to flip the vectors so that they're compatible
-    (let [[na ma] (size a)
-          [nb mb] (size b)]
-      (if (and (== na mb)
-               (== ma nb)) ;; Oh, then let's flip it to match a
-        (.minus a (.transpose b))
-        (.minus a b)))
-    ;; Else just fall through to EJML's minus
-    (.minus a b)))
+  "Computes the elementwise matrix difference of two (or more)
+   SimpleMatrix objects. If both are vectors, then they will be
+   automatically transposed as necessary so as to match the shape of
+   the first one"
+  ([a] a)
+  ([a b]
+     (if (and (.isVector a)
+              (.isVector b))
+       ;; Let's try to flip the vectors so that they're compatible
+       (let [[na ma] (size a)
+             [nb mb] (size b)]
+         (if (and (== na mb)
+                  (== ma nb)) ;; Oh, then let's flip it to match a
+           (.minus a (.transpose b))
+           (.minus a b)))
+       ;; Else just fall through to EJML's minus
+       (.minus a b))))
 
 ;;; Data matrix operations
 ;; For the most part by convention data will be matrices in "example
