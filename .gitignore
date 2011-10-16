@@ -1,0 +1,17 @@
+tmp/
+data/
+*.aux
+_region_.tex
+*.log
+reports/**/*.pdf
+*.dvi
+/old
+/data
+pom.xml
+*jar
+/lib/
+/classes/
+/target/
+/model/
+.lein-failures
+.lein-deps-sum
