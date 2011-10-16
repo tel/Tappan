@@ -1,6 +1,12 @@
 ;;; Some obvious utility functions
 (ns tappan.util)
 
+;;; Function utilities
+;;;
+(defn flip [f] (fn [a b] (f b a)))
+
+;;; Optimizations
+;;; 
 (defn indopt
   "Find the index of the maximal value according to ord."
   [ord xs]
