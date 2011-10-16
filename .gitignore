@@ -1,5 +1,5 @@
-tmp/
-data/
+/tmp/
+/data/
 *.aux
 _region_.tex
 *.log
