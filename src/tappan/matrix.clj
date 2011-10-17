@@ -37,6 +37,13 @@
         (.set m0 idx v)))
     m0))
 
+;;; Setting operations
+;;; 
+(defn set [m i j v]
+  (let [idx (.getIndex m i j)]
+    (.set m idx v)
+    v))
+
 ;;; Merging matrices
 ;;; 
 (defn above
