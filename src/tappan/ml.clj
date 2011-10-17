@@ -76,16 +76,21 @@
   (let [dists (map #(m/norm (m/diff datum %)) means)]
     (indmin dists)))
 
-(defn- improve-kmeans
-  [data means]
-  (let [labeled (reduce #(update-in %1 [(nearest-mean %2 means)] (flip cons) %2)
-                        (hash-map) (m/mapdat [row data] row))]
-    (map #(m/scale (/ (float (count %)))
-                   (apply m/sum %))
-         (vals labeled))))
-
 (defn kmeans
   "k-Means by Lloyd's algorithm"
-  [data k & [n]]
-  (let [means (take k (m/mapdat [row data] row))]
-    (nth (iterate (partial improve-kmeans data) means) (or n 20))))
+  [data k & {:keys [limit] :or {limit 200}}]
+  (let [means (take k (m/mapdat [row data] row))
+        improve-means
+        (fn [data means]
+          (let [labeled (reduce #(update-in %1 [(nearest-mean %2 means)] (flip cons) %2)
+                                (hash-map) (m/mapdat [row data] row))]
+            (map #(m/scale (/ (float (count %)))
+                           (apply m/sum %))
+                 (vals labeled))))]
+    (converge-by
+     ;; Can this cycle? Converges when every mean has moved less than
+     ;; 1e-5, but if means swap back and forth it will run forever...
+     limit (fn [m1 m2]
+             (some identity
+                   (map #(> (m/norm (m/diff %1 %2)) 1e-5) m1 m2)))
+     (iterate (partial improve-kmeans data)))))
