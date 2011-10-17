@@ -62,6 +62,13 @@
      (let [idx (.getIndex m i j)]
        (get m idx))))
 
+;;; TODO: How can I make this work?
+;;; 
+;; (extend-type org.ejml.simple.SimpleMatrix
+;;   clojure.lang.AFn
+;;   (invoke [this i j] (get this i j))
+;;   (applyTo [this args] (clojure.lang.AFn/applyToHelper this args)))
+
 (defmacro get*
   "Universal extractor: use :_ to indicate a wildcard on a particular dimension."
   [m i j]
