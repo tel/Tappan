@@ -10,7 +10,8 @@
                      :default "13241"]
                     #(Integer/parseInt %))
           (optional ["-db" "--database" "Database name"
-                     :default "gold"])))
+                     :default "gold"]
+                    keyword)))
 
 (defmacro with-invoked-mongo [inv & body]
   `(let [mongo# (:mongo ~inv)]

@@ -22,21 +22,21 @@
   "Reads the posterior file referenced by switchboard id. Without
   specifying the beginning and end, it will read the entire file."
   [swid & [beg end]]
-  (let [file (RandomAccessFile. (id->path swid) "r")
-        len  (.length file)
-        beg  (or beg 0)                 ; frames
-        end  (or end (/ len post-N*))   ; frames
-        N (- end beg)
-        bb (ByteBuffer/allocate 4)]
-    (.seek file (* 4 beg post-N*))
-    (m/from-sparse
-     N post-N*
-     (map (fn [[i j]]
-            ;; This is a nonsense way to flip the endianness which is necessary.
-            ;; So stupid.
-            (.clear bb)
-            (.order bb (ByteOrder/LITTLE_ENDIAN))
-            (.putFloat bb (.readFloat file))
-            (.order bb (ByteOrder/BIG_ENDIAN))
-            [i j (.getFloat bb 0)])
-          (for [i (range N) j (range post-N*)] [i j])))))
+  (with-open [file (RandomAccessFile. (id->path swid) "r")]
+    (let [len  (.length file)
+          beg  (or beg 0)               ; frames
+          end  (or end (/ len post-N*)) ; frames
+          N (- end beg)
+          bb (ByteBuffer/allocate 4)]
+      (.seek file (* 4 beg post-N*))
+      (m/from-sparse
+       N post-N*
+       (map (fn [[i j]]
+              ;; This is a nonsense way to flip the endianness which is necessary.
+              ;; So stupid.
+              (.clear bb)
+              (.order bb (ByteOrder/LITTLE_ENDIAN))
+              (.putFloat bb (.readFloat file))
+              (.order bb (ByteOrder/BIG_ENDIAN))
+              [i j (.getFloat bb 0)])
+            (for [i (range N) j (range post-N*)] [i j]))))))

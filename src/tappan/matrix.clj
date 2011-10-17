@@ -82,17 +82,17 @@
   particular dimension."
   [m i j]
   (cond (= i j :_) `(let [mat# ~m
-                          [n# m#] (size mat#)]
+                          [n# d#] (size mat#)]
                       (iterator-seq
-                       (.iterator mat# true 0 0 (dec n#) (dec m#))))
+                       (.iterator mat# true 0 0 (dec n#) (dec d#))))
         (= j :_) `(let [mat# ~m
                         i# ~i
-                        [n# m#] (size mat#)]
+                        [n# d#] (size mat#)]
                     (iterator-seq
-                     (.iterator mat# true i# 0 i# (dec m#))))
+                     (.iterator mat# true i# 0 i# (dec d#))))
         (= i :_) `(let [mat# ~m
                         j# ~j
-                        [n# m#] (size mat#)]
+                        [n# d#] (size mat#)]
                     (iterator-seq
                      (.iterator mat# true 0 j# (dec n#) j#)))
         true `(let [mat# ~m

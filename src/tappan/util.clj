@@ -33,8 +33,8 @@
 
 (defn indmax
   "Find the index which maximizes the values in sequence xs."
-  [xs] (indopt < xs))
+  [xs] (indopt > xs))
 
 (defn indmin
   "Find the index which maximizes the values in sequence xs."
-  [xs] (indopt > xs))
+  [xs] (indopt < xs))
