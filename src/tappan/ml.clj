@@ -81,19 +81,20 @@
 
 (defn kmeans
   "k-Means by Lloyd's algorithm"
-  [data k & {:keys [limit] :or {limit 200}}]
-  (let [means (take k (m/mapdat [row data] row))
-        improve-means
-        (fn [data means]
-          (let [labeled (reduce #(update-in %1 [(nearest-mean %2 means)] (flip cons) %2)
-                                (hash-map) (m/mapdat [row data] row))]
-            (map #(m/scale (/ (float (count %)))
-                           (apply m/sum %))
-                 (vals labeled))))]
+  [data nmeans & {:keys [limit] :or {limit 200}}]
+  (let [[n d] (m/size data)]
     (converge-by
-     ;; Can this cycle? Converges when every mean has moved less than
-     ;; 1e-5, but if means swap back and forth it will run forever...
-     limit (fn [m1 m2]
-             (some identity
-                   (map #(> (m/norm (m/diff %1 %2)) 1e-5) m1 m2)))
-     (iterate (partial improve-means data)))))
+     ;; Can this cycle? Converges when the partition stops changing,
+     ;; but with the exact same issues as above.
+     limit (comp not =)
+     ;; Iteratedly improve the partition
+     (iterate (fn [part]
+                (let [means (map #(m/scale
+                                   (/ (count %))
+                                   (apply m/sum
+                                          (map (partial m/nth-row data) %)))
+                                 part)]
+                  (vals
+                   (group-by #(nearest-mean (m/nth-row data %) means)
+                             (range n)))))
+              (partition-all (Math/ceil (/ n nmeans)) (range n))))))
