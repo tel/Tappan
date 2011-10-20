@@ -1,5 +1,7 @@
 /tmp/
 /data/
+/checkouts/
+/svg/
 *.aux
 _region_.tex
 *.log
