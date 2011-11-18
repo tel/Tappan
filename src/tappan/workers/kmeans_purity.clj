@@ -45,7 +45,7 @@
 
 (defn espace-of
   ([affinity] (let [[n d] (m/size affinity)] (espace-of affinity n)))
-  ([affinity n]
+  ([affinity n-vecs]
      (let [[n d] (m/size affinity)
            root-d (m/diag
                    (for [i (range n)]
@@ -54,7 +54,7 @@
                           + (m/gets* affinity i :_))))))
            lap (m/prod root-d affinity root-d)
            {:keys [_ vecs]} (m/eig lap)]
-       (apply m/above (map m/normalize (m/rows (apply m/then (take n vecs))))))))
+       (apply m/above (map m/normalize (m/rows (apply m/then (take n-vecs vecs))))))))
 
 (defn instance-distance-matrix [data]
   (let [n (count data)]
