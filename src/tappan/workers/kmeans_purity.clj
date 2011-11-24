@@ -54,7 +54,15 @@
                           + (m/gets* affinity i :_))))))
            lap (m/prod root-d affinity root-d)
            {:keys [_ vecs]} (m/eig lap)]
-       (apply m/above (map m/normalize (m/rows (apply m/then (take n-vecs vecs))))))))
+       (->> vecs
+            (apply m/then)
+            (m/rows)
+            (map m/normalize)
+            (apply m/above)
+            (m/cols)
+            (drop (- n n-vecs))
+            (reverse)
+            (apply m/then)))))
 
 (defn instance-distance-matrix [data]
   (let [n (count data)]
